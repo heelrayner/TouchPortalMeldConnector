@@ -1,0 +1,1090 @@
+{
+  "sdk": 10,
+  "version": 1,
+  "name": "Meld Studio Control",
+  "id": "meld.touchportal.fullcontrol",
+  "plugin_start_cmd": [
+    "node",
+    "%TP_PLUGIN_FOLDER%/MeldTP/src/index.js"
+  ],
+  "settings": [
+    {
+      "name": "Meld Host",
+      "id": "meld.host",
+      "type": "text",
+      "default": "127.0.0.1"
+    },
+    {
+      "name": "Meld Port",
+      "id": "meld.port",
+      "type": "number",
+      "default": "4455"
+    },
+    {
+      "name": "Authentication Token",
+      "id": "meld.authToken",
+      "type": "secret",
+      "default": ""
+    },
+    {
+      "name": "Primary Transport",
+      "id": "meld.transport",
+      "type": "choice",
+      "default": "webchannel",
+      "valueChoices": [
+        {
+          "id": "webchannel",
+          "value": "Qt WebChannel"
+        },
+        {
+          "id": "cli",
+          "value": "Meld CLI"
+        }
+      ]
+    },
+    {
+      "name": "CLI Executable Path",
+      "id": "meld.cliPath",
+      "type": "text",
+      "default": "meld-cli"
+    },
+    {
+      "name": "Poll Interval (ms)",
+      "id": "meld.pollInterval",
+      "type": "number",
+      "default": "1500"
+    },
+    {
+      "name": "High Frequency Metrics",
+      "id": "meld.metrics.enabled",
+      "type": "choice",
+      "default": "off",
+      "valueChoices": [
+        {
+          "id": "off",
+          "value": "Disabled"
+        },
+        {
+          "id": "on",
+          "value": "Enabled"
+        }
+      ]
+    },
+    {
+      "name": "Metrics Interval (ms)",
+      "id": "meld.metrics.interval",
+      "type": "number",
+      "default": "5000"
+    },
+    {
+      "name": "Log Level",
+      "id": "meld.logLevel",
+      "type": "choice",
+      "default": "info",
+      "valueChoices": [
+        {
+          "id": "error",
+          "value": "Error"
+        },
+        {
+          "id": "warn",
+          "value": "Warn"
+        },
+        {
+          "id": "info",
+          "value": "Info"
+        },
+        {
+          "id": "debug",
+          "value": "Debug"
+        }
+      ]
+    }
+  ],
+  "state": [
+    {
+      "id": "meld.connection",
+      "type": "choice",
+      "description": "Connection status to Meld Studio",
+      "valueChoices": [
+        {
+          "id": "connected",
+          "value": "Connected"
+        },
+        {
+          "id": "connecting",
+          "value": "Connecting"
+        },
+        {
+          "id": "disconnected",
+          "value": "Disconnected"
+        }
+      ],
+      "default": "disconnected"
+    },
+    {
+      "id": "meld.currentScene",
+      "type": "text",
+      "description": "Active program scene"
+    },
+    {
+      "id": "meld.previewScene",
+      "type": "text",
+      "description": "Active preview scene"
+    },
+    {
+      "id": "meld.sceneList",
+      "type": "text",
+      "description": "Comma separated scene names"
+    },
+    {
+      "id": "meld.streaming.status",
+      "type": "choice",
+      "valueChoices": [
+        {
+          "id": "offline",
+          "value": "Offline"
+        },
+        {
+          "id": "starting",
+          "value": "Starting"
+        },
+        {
+          "id": "online",
+          "value": "Online"
+        }
+      ],
+      "default": "offline"
+    },
+    {
+      "id": "meld.streaming.uptime",
+      "type": "text",
+      "description": "Streaming uptime"
+    },
+    {
+      "id": "meld.streaming.bitrate",
+      "type": "text",
+      "description": "Current streaming bitrate"
+    },
+    {
+      "id": "meld.recording.status",
+      "type": "choice",
+      "valueChoices": [
+        {
+          "id": "idle",
+          "value": "Idle"
+        },
+        {
+          "id": "recording",
+          "value": "Recording"
+        },
+        {
+          "id": "paused",
+          "value": "Paused"
+        }
+      ],
+      "default": "idle"
+    },
+    {
+      "id": "meld.recording.uptime",
+      "type": "text",
+      "description": "Recording duration"
+    },
+    {
+      "id": "meld.virtualcam.status",
+      "type": "choice",
+      "valueChoices": [
+        {
+          "id": "off",
+          "value": "Off"
+        },
+        {
+          "id": "on",
+          "value": "On"
+        }
+      ],
+      "default": "off"
+    },
+    {
+      "id": "meld.output.fps",
+      "type": "text",
+      "description": "Output FPS"
+    },
+    {
+      "id": "meld.output.cpu",
+      "type": "text",
+      "description": "CPU usage"
+    },
+    {
+      "id": "meld.output.droppedFrames",
+      "type": "text",
+      "description": "Dropped frames stats"
+    },
+    {
+      "id": "meld.audio.mix",
+      "type": "text",
+      "description": "JSON encoded audio levels"
+    },
+    {
+      "id": "meld.media.status",
+      "type": "text",
+      "description": "JSON encoded media playback info"
+    },
+    {
+      "id": "meld.project.name",
+      "type": "text",
+      "description": "Active project"
+    },
+    {
+      "id": "meld.profile.name",
+      "type": "text",
+      "description": "Active profile"
+    },
+    {
+      "id": "meld.collection.name",
+      "type": "text",
+      "description": "Active collection"
+    }
+  ],
+  "events": [],
+  "categories": [
+    {
+      "id": "meld.scenes",
+      "name": "Scenes"
+    },
+    {
+      "id": "meld.sources",
+      "name": "Sources"
+    },
+    {
+      "id": "meld.items",
+      "name": "Scene Items"
+    },
+    {
+      "id": "meld.audio",
+      "name": "Audio"
+    },
+    {
+      "id": "meld.filters",
+      "name": "Filters"
+    },
+    {
+      "id": "meld.transitions",
+      "name": "Transitions"
+    },
+    {
+      "id": "meld.outputs",
+      "name": "Streaming & Outputs"
+    },
+    {
+      "id": "meld.media",
+      "name": "Media"
+    },
+    {
+      "id": "meld.capture",
+      "name": "Clips & Screens"
+    },
+    {
+      "id": "meld.project",
+      "name": "Project"
+    },
+    {
+      "id": "meld.advanced",
+      "name": "Advanced"
+    }
+  ],
+  "actions": [
+    {
+      "id": "meld.scene.switch",
+      "name": "Switch Scene",
+      "category": "meld.scenes",
+      "description": "Switch program scene",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "choice",
+          "label": "Scene",
+          "valueChoiceDynamicId": "scenes:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.scene.create",
+      "name": "Create Scene",
+      "category": "meld.scenes",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "text",
+          "label": "New Scene Name"
+        }
+      ]
+    },
+    {
+      "id": "meld.scene.rename",
+      "name": "Rename Scene",
+      "category": "meld.scenes",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "choice",
+          "label": "Scene",
+          "valueChoiceDynamicId": "scenes:list"
+        },
+        {
+          "id": "newName",
+          "type": "text",
+          "label": "New Name"
+        }
+      ]
+    },
+    {
+      "id": "meld.scene.delete",
+      "name": "Delete Scene",
+      "category": "meld.scenes",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "choice",
+          "label": "Scene",
+          "valueChoiceDynamicId": "scenes:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.scene.setTransition",
+      "name": "Set Transition",
+      "category": "meld.scenes",
+      "data": [
+        {
+          "id": "transition",
+          "type": "choice",
+          "label": "Transition",
+          "valueChoiceDynamicId": "transitions:list"
+        },
+        {
+          "id": "duration",
+          "type": "number",
+          "label": "Duration (ms)",
+          "default": "300"
+        }
+      ]
+    },
+    {
+      "id": "meld.scene.quickTransition",
+      "name": "Trigger Transition",
+      "category": "meld.scenes",
+      "data": [
+        {
+          "id": "transition",
+          "type": "choice",
+          "label": "Transition",
+          "valueChoiceDynamicId": "transitions:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.source.add",
+      "name": "Add Source",
+      "category": "meld.sources",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "choice",
+          "label": "Scene",
+          "valueChoiceDynamicId": "scenes:list"
+        },
+        {
+          "id": "sourceType",
+          "type": "choice",
+          "label": "Type",
+          "valueChoiceDynamicId": "sources:types"
+        },
+        {
+          "id": "sourceName",
+          "type": "text",
+          "label": "Source Name"
+        },
+        {
+          "id": "config",
+          "type": "text",
+          "label": "Config JSON"
+        }
+      ]
+    },
+    {
+      "id": "meld.source.remove",
+      "name": "Remove Source",
+      "category": "meld.sources",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "choice",
+          "label": "Scene",
+          "valueChoiceDynamicId": "scenes:list"
+        },
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "sources:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.source.reload",
+      "name": "Reload Source",
+      "category": "meld.sources",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "sources:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.source.configure",
+      "name": "Configure Source",
+      "category": "meld.sources",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "sources:list"
+        },
+        {
+          "id": "property",
+          "type": "choice",
+          "label": "Property",
+          "valueChoiceDynamicId": "sources:properties"
+        },
+        {
+          "id": "value",
+          "type": "text",
+          "label": "Value"
+        }
+      ]
+    },
+    {
+      "id": "meld.item.visibility",
+      "name": "Set Item Visibility",
+      "category": "meld.items",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "choice",
+          "label": "Scene",
+          "valueChoiceDynamicId": "scenes:list"
+        },
+        {
+          "id": "itemName",
+          "type": "choice",
+          "label": "Item",
+          "valueChoiceDynamicId": "items:list"
+        },
+        {
+          "id": "mode",
+          "type": "choice",
+          "label": "Mode",
+          "valueChoices": [
+            {
+              "id": "show",
+              "value": "Show"
+            },
+            {
+              "id": "hide",
+              "value": "Hide"
+            },
+            {
+              "id": "toggle",
+              "value": "Toggle"
+            }
+          ],
+          "default": "toggle"
+        }
+      ]
+    },
+    {
+      "id": "meld.item.transform",
+      "name": "Adjust Item Transform",
+      "category": "meld.items",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "choice",
+          "label": "Scene",
+          "valueChoiceDynamicId": "scenes:list"
+        },
+        {
+          "id": "itemName",
+          "type": "choice",
+          "label": "Item",
+          "valueChoiceDynamicId": "items:list"
+        },
+        {
+          "id": "transform",
+          "type": "text",
+          "label": "Transform JSON"
+        }
+      ]
+    },
+    {
+      "id": "meld.item.order",
+      "name": "Set Item Order",
+      "category": "meld.items",
+      "data": [
+        {
+          "id": "sceneName",
+          "type": "choice",
+          "label": "Scene",
+          "valueChoiceDynamicId": "scenes:list"
+        },
+        {
+          "id": "itemName",
+          "type": "choice",
+          "label": "Item",
+          "valueChoiceDynamicId": "items:list"
+        },
+        {
+          "id": "position",
+          "type": "choice",
+          "label": "Position",
+          "valueChoices": [
+            {
+              "id": "top",
+              "value": "Top"
+            },
+            {
+              "id": "up",
+              "value": "Up"
+            },
+            {
+              "id": "down",
+              "value": "Down"
+            },
+            {
+              "id": "bottom",
+              "value": "Bottom"
+            }
+          ],
+          "default": "up"
+        }
+      ]
+    },
+    {
+      "id": "meld.audio.mute",
+      "name": "Set Source Mute",
+      "category": "meld.audio",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "audio:sources"
+        },
+        {
+          "id": "mode",
+          "type": "choice",
+          "label": "Mode",
+          "valueChoices": [
+            {
+              "id": "mute",
+              "value": "Mute"
+            },
+            {
+              "id": "unmute",
+              "value": "Unmute"
+            },
+            {
+              "id": "toggle",
+              "value": "Toggle"
+            }
+          ],
+          "default": "toggle"
+        }
+      ]
+    },
+    {
+      "id": "meld.audio.volume",
+      "name": "Set Source Volume",
+      "category": "meld.audio",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "audio:sources"
+        },
+        {
+          "id": "volumeDb",
+          "type": "text",
+          "label": "Volume (dB)"
+        }
+      ]
+    },
+    {
+      "id": "meld.audio.monitor",
+      "name": "Set Monitor Mode",
+      "category": "meld.audio",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "audio:sources"
+        },
+        {
+          "id": "monitor",
+          "type": "choice",
+          "label": "Mode",
+          "valueChoices": [
+            {
+              "id": "monitorOff",
+              "value": "Monitor Off"
+            },
+            {
+              "id": "monitorAndOutput",
+              "value": "Monitor and Output"
+            },
+            {
+              "id": "monitorOnly",
+              "value": "Monitor Only"
+            }
+          ],
+          "default": "monitorOff"
+        }
+      ]
+    },
+    {
+      "id": "meld.filters.toggle",
+      "name": "Toggle Filter",
+      "category": "meld.filters",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "sources:list"
+        },
+        {
+          "id": "filterName",
+          "type": "choice",
+          "label": "Filter",
+          "valueChoiceDynamicId": "filters:list"
+        },
+        {
+          "id": "mode",
+          "type": "choice",
+          "label": "Mode",
+          "valueChoices": [
+            {
+              "id": "enable",
+              "value": "Enable"
+            },
+            {
+              "id": "disable",
+              "value": "Disable"
+            },
+            {
+              "id": "toggle",
+              "value": "Toggle"
+            }
+          ],
+          "default": "toggle"
+        }
+      ]
+    },
+    {
+      "id": "meld.filters.adjust",
+      "name": "Set Filter Property",
+      "category": "meld.filters",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "sources:list"
+        },
+        {
+          "id": "filterName",
+          "type": "choice",
+          "label": "Filter",
+          "valueChoiceDynamicId": "filters:list"
+        },
+        {
+          "id": "property",
+          "type": "text",
+          "label": "Property"
+        },
+        {
+          "id": "value",
+          "type": "text",
+          "label": "Value"
+        }
+      ]
+    },
+    {
+      "id": "meld.transitions.set",
+      "name": "Set Current Transition",
+      "category": "meld.transitions",
+      "data": [
+        {
+          "id": "transition",
+          "type": "choice",
+          "label": "Transition",
+          "valueChoiceDynamicId": "transitions:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.transitions.duration",
+      "name": "Set Transition Duration",
+      "category": "meld.transitions",
+      "data": [
+        {
+          "id": "duration",
+          "type": "number",
+          "label": "Duration (ms)"
+        }
+      ]
+    },
+    {
+      "id": "meld.stream.toggle",
+      "name": "Toggle Stream",
+      "category": "meld.outputs",
+      "data": [
+        {
+          "id": "mode",
+          "type": "choice",
+          "label": "Mode",
+          "valueChoices": [
+            {
+              "id": "toggle",
+              "value": "Toggle"
+            },
+            {
+              "id": "start",
+              "value": "Start"
+            },
+            {
+              "id": "stop",
+              "value": "Stop"
+            }
+          ],
+          "default": "toggle"
+        }
+      ]
+    },
+    {
+      "id": "meld.record.toggle",
+      "name": "Toggle Recording",
+      "category": "meld.outputs",
+      "data": [
+        {
+          "id": "mode",
+          "type": "choice",
+          "label": "Mode",
+          "valueChoices": [
+            {
+              "id": "toggle",
+              "value": "Toggle"
+            },
+            {
+              "id": "start",
+              "value": "Start"
+            },
+            {
+              "id": "stop",
+              "value": "Stop"
+            },
+            {
+              "id": "pause",
+              "value": "Pause"
+            },
+            {
+              "id": "resume",
+              "value": "Resume"
+            }
+          ],
+          "default": "toggle"
+        }
+      ]
+    },
+    {
+      "id": "meld.virtualcam.toggle",
+      "name": "Toggle Virtual Camera",
+      "category": "meld.outputs",
+      "data": [
+        {
+          "id": "mode",
+          "type": "choice",
+          "label": "Mode",
+          "valueChoices": [
+            {
+              "id": "toggle",
+              "value": "Toggle"
+            },
+            {
+              "id": "start",
+              "value": "Start"
+            },
+            {
+              "id": "stop",
+              "value": "Stop"
+            }
+          ],
+          "default": "toggle"
+        }
+      ]
+    },
+    {
+      "id": "meld.media.control",
+      "name": "Media Control",
+      "category": "meld.media",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "media:sources"
+        },
+        {
+          "id": "command",
+          "type": "choice",
+          "label": "Command",
+          "valueChoices": [
+            {
+              "id": "play",
+              "value": "Play"
+            },
+            {
+              "id": "pause",
+              "value": "Pause"
+            },
+            {
+              "id": "stop",
+              "value": "Stop"
+            },
+            {
+              "id": "restart",
+              "value": "Restart"
+            },
+            {
+              "id": "next",
+              "value": "Next"
+            },
+            {
+              "id": "previous",
+              "value": "Previous"
+            }
+          ],
+          "default": "play"
+        },
+        {
+          "id": "timecode",
+          "type": "text",
+          "label": "Timecode (ms or HH:MM:SS)",
+          "optional": true
+        }
+      ]
+    },
+    {
+      "id": "meld.media.seek",
+      "name": "Seek Media",
+      "category": "meld.media",
+      "data": [
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source",
+          "valueChoiceDynamicId": "media:sources"
+        },
+        {
+          "id": "position",
+          "type": "text",
+          "label": "Position (ms)"
+        }
+      ]
+    },
+    {
+      "id": "meld.capture.screenshot",
+      "name": "Take Screenshot",
+      "category": "meld.capture",
+      "data": [
+        {
+          "id": "target",
+          "type": "choice",
+          "label": "Target",
+          "valueChoices": [
+            {
+              "id": "program",
+              "value": "Program"
+            },
+            {
+              "id": "preview",
+              "value": "Preview"
+            },
+            {
+              "id": "source",
+              "value": "Source"
+            }
+          ],
+          "default": "program"
+        },
+        {
+          "id": "sourceName",
+          "type": "choice",
+          "label": "Source (optional)",
+          "optional": true,
+          "valueChoiceDynamicId": "sources:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.capture.replay",
+      "name": "Save Replay/Clip",
+      "category": "meld.capture",
+      "data": [
+        {
+          "id": "duration",
+          "type": "number",
+          "label": "Duration (s)",
+          "default": "15"
+        }
+      ]
+    },
+    {
+      "id": "meld.project.load",
+      "name": "Load Project",
+      "category": "meld.project",
+      "data": [
+        {
+          "id": "project",
+          "type": "choice",
+          "label": "Project",
+          "valueChoiceDynamicId": "project:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.project.save",
+      "name": "Save Project",
+      "category": "meld.project",
+      "data": []
+    },
+    {
+      "id": "meld.profile.switch",
+      "name": "Switch Profile",
+      "category": "meld.project",
+      "data": [
+        {
+          "id": "profile",
+          "type": "choice",
+          "label": "Profile",
+          "valueChoiceDynamicId": "profile:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.collection.switch",
+      "name": "Switch Scene Collection",
+      "category": "meld.project",
+      "data": [
+        {
+          "id": "collection",
+          "type": "choice",
+          "label": "Collection",
+          "valueChoiceDynamicId": "collection:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.advanced.hotkey",
+      "name": "Trigger Hotkey",
+      "category": "meld.advanced",
+      "data": [
+        {
+          "id": "hotkey",
+          "type": "choice",
+          "label": "Hotkey",
+          "valueChoiceDynamicId": "hotkeys:list"
+        }
+      ]
+    },
+    {
+      "id": "meld.advanced.command",
+      "name": "Execute Raw Command",
+      "category": "meld.advanced",
+      "data": [
+        {
+          "id": "method",
+          "type": "text",
+          "label": "Method"
+        },
+        {
+          "id": "params",
+          "type": "text",
+          "label": "Params JSON",
+          "optional": true
+        }
+      ]
+    }
+  ],
+  "connectors": [
+    {
+      "id": "scenes:list",
+      "name": "Scene List"
+    },
+    {
+      "id": "sources:list",
+      "name": "Sources"
+    },
+    {
+      "id": "sources:types",
+      "name": "Source Types"
+    },
+    {
+      "id": "sources:properties",
+      "name": "Source Properties"
+    },
+    {
+      "id": "items:list",
+      "name": "Items"
+    },
+    {
+      "id": "filters:list",
+      "name": "Filters"
+    },
+    {
+      "id": "transitions:list",
+      "name": "Transitions"
+    },
+    {
+      "id": "audio:sources",
+      "name": "Audio Sources"
+    },
+    {
+      "id": "media:sources",
+      "name": "Media Sources"
+    },
+    {
+      "id": "project:list",
+      "name": "Projects"
+    },
+    {
+      "id": "profile:list",
+      "name": "Profiles"
+    },
+    {
+      "id": "collection:list",
+      "name": "Collections"
+    },
+    {
+      "id": "hotkeys:list",
+      "name": "Hotkeys"
+    }
+  ]
+}
